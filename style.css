@@ -1,0 +1,98 @@
+/* Reset & box-sizing */
+* { box-sizing: border-box; margin:0; padding:0; }
+
+/* Body & page layout */
+body {
+  background: #f0f2f5;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Main white card */
+.container {
+  background: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+/* Flash messages */
+.flash-container { position: fixed; top: 20px; width: 100%; display: flex; justify-content:center; }
+.flash { padding: 10px 20px; border-radius:6px; color: #fff; margin: 0 5px; }
+.flash.success { background: #4caf50; }
+.flash.danger  { background: #f44336; }
+
+/* Headings */
+h1 { margin-bottom: 20px; color: #333; }
+
+/* Buttons */
+.button-container, .contact-list { margin-top: 20px; }
+.button {
+  display: block;
+  background: #007bff;
+  color: #fff;
+  padding: 14px;
+  margin: 10px auto;
+  width: 200px;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background 0.3s;
+  border: none;
+  cursor: pointer;
+}
+.button:hover { background: #0056b3; }
+
+/* Cancel button style */
+.button.cancel {
+  background: #dc3545;
+}
+.button.cancel:hover {
+  background: #c82333;
+}
+
+/* Countdown timer */
+#countdown-timer {
+  font-size: 16px;
+  color: #ff5722;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* Edit Button */
+.contact-list a.button {
+  display: inline-block;
+  background: #f0ad4e; /* Different color for Edit button */
+  margin-top: 10px;
+}
+.contact-list a.button:hover {
+  background: #ec971f;
+}
+
+/* Forms */
+form {
+  max-width: 400px;
+  margin: auto;
+}
+form label { display:block; margin-top:15px; text-align:left; color:#555; }
+form input {
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+  border:1px solid #ddd;
+  border-radius:6px;
+}
+form button { margin-top:20px; }
+
+/* Contact list */
+.contact-list { list-style:none; padding:0; }
+.contact-list li {
+  background:#f9f9f9;
+  padding:15px;
+  margin:10px 0;
+  border-radius:6px;
+  text-align:left;
+}

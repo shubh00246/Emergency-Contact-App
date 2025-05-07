@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Emergency Contact App</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Emergency Contact App</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-container">
+          {% for category, msg in messages %}
+            <div class="flash {{ category }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="button-container">
+      <a href="{{ url_for('add') }}" class="button">Add Contact</a>
+      <a href="{{ url_for('contacts') }}" class="button">Saved Contacts</a>
+
+      <!-- Send Alert Button -->
+      <form id="alertForm" style="display:inline;">
+        <button type="submit" class="button">Send Alert Message</button>
+        <button type="button" id="cancel-button" class="button cancel" style="display:none;">Cancel Alert</button>
+      </form>
+
+      <!-- Countdown Timer -->
+      <div id="countdown-timer" style="display:none; margin-top:10px;">
+        Sending alert in <span id="timer-number">10</span> seconds...
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript for location + countdown + JSON fetch -->
+  <script>
+    let timer = null;
+    let countdown = 10;
+
+    const alertForm = document.getElementById("alertForm");
+    const countdownDisplay = document.getElementById("countdown-timer");
+    const cancelButton = document.getElementById("cancel-button");
+    const timerNumber = document.getElementById("timer-number");
+
+    alertForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      if (!navigator.geolocation) {
+        alert("Geolocation is not supported.");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        countdownDisplay.style.display = "block";
+        cancelButton.style.display = "inline-block";
+        timerNumber.textContent = countdown;
+
+        timer = setInterval(() => {
+          countdown--;
+          timerNumber.textContent = countdown;
+
+          if (countdown === 0) {
+            clearInterval(timer);
+            countdownDisplay.textContent = "Sending alert...";
+
+            // Send JSON to Flask
+            fetch("{{ url_for('alert') }}", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ latitude, longitude })
+            })
+            .then(res => res.json())
+            .then(data => {
+              if (data.status === "success") {
+                countdownDisplay.textContent = "Alert sent successfully!";
+              } else {
+                countdownDisplay.textContent = "Error: " + data.message;
+              }
+            })
+            .catch(err => {
+              countdownDisplay.textContent = "Failed to send alert.";
+            });
+
+            cancelButton.style.display = "none";
+            countdown = 10;
+          }
+        }, 1000);
+      }, function(error) {
+        alert("Location access denied. Can't send alert.");
+      });
+    });
+
+    cancelButton.addEventListener("click", function() {
+      clearInterval(timer);
+      countdown = 10;
+      countdownDisplay.style.display = "none";
+      cancelButton.style.display = "none";
+    });
+  </script>
+</body>
+</html>
